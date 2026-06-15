@@ -1,6 +1,7 @@
 package com.oper.springapicommon.common.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -36,5 +37,24 @@ public class GlobalExceptionHandler {
 								e.getMessage()
 								)
 						);
+	}
+	
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiResponse<Void>> validationException(
+	        MethodArgumentNotValidException e) {
+
+	    String message = e.getBindingResult()
+	            .getFieldError()
+	            .getDefaultMessage();
+
+	    return ResponseEntity
+	            .badRequest()
+	            .body(
+	                    ApiResponse.fail(
+	                            400,
+	                            "INVALID_PARAMETER",
+	                            message
+	                    )
+	            );
 	}
 }
